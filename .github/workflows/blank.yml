@@ -20,7 +20,7 @@ jobs:
           echo "status_time=$(echo "$RESULT" | jq -r '.statusTime')" >> "$GITHUB_OUTPUT"
 
       - name: Send notification
-        if: steps.status.outputs.has_service == 'false'
+        if: steps.status.outputs.in_service == 'true'
         run: |
           curl -s -X POST "$WEBHOOK_URL" \
             -H "Content-Type: application/json" \
