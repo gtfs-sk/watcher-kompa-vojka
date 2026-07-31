@@ -14,16 +14,10 @@ jobs:
       - name: Check service status
         id: status
         run: |
-          RESULT=$(curl -s https://kompa-vojka.sk/api/public/service-status | jq -c '.[] | select(.inService | tostring | contains("true"))')
-          echo "result<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$RESULT" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-
-          if [ -n "$RESULT" ]; then
-            echo "has_service=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_service=false" >> "$GITHUB_OUTPUT"
-          fi
+          RESULT=$(curl -s https://kompa-vojka.sk/api/public/service-status)
+          IN_SERVICE=$(echo "$RESULT" | jq -r '.inService')
+          echo "in_service=$IN_SERVICE" >> "$GITHUB_OUTPUT"
+          echo "status_time=$(echo "$RESULT" | jq -r '.statusTime')" >> "$GITHUB_OUTPUT"
 
       - name: Send notification
         if: steps.status.outputs.has_service == 'true'
